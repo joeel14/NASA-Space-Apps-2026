@@ -8,6 +8,11 @@ __pycache__/
 .cache/
 *.log
 
+# Binarios de capas (contrato §3.3): van a una release o a la carpeta del equipo
+layers/*/G1K/
+layers/*/W4/
+layers/*/PS1K/
+
 # Web
 web/node_modules/
 web/dist/
