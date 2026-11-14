@@ -25,14 +25,14 @@ URL = "https://pds-geosciences.wustl.edu/missions/lunarp/reduced"
 COLS, ROWS = 1440, 720  # W4
 STEP = 360.0 / COLS
 
-# id → (fitxer PDS, divisor, factor físic, etiqueta, unitats)
+# id → (fitxer PDS, divisor, factor físic, etiqueta, unitats, res_deg, res_note)
 LAYERS = {
-    "ice.hydrogen_ppm": ("hydrogenhd", 10, 1.0, "Hydrogen", "ppm"),
-    "regolith.feo_wt_pct": ("ironhd", 10, 1.0, "FeO", "wt%"),
-    "regolith.tio2_wt_pct": ("titanium2d", 10, 1.6683, "TiO2", "wt%"),
-    "radiation.thorium_ppm": ("thoriumhd", 10, 1.0, "Thorium", "ppm"),
-    "radiation.potassium_ppm": ("potassium2d", 1, 1.0, "Potassium", "ppm"),
-    "radiation.uranium_ppm": ("uranium5d", 10, 1.0, "Uranium", "ppm"),
+    "ice.hydrogen_ppm": ("hydrogenhd", 10, 1.0, "Hydrogen", "ppm", 0.5, "0.5° Lunar Prospector NS (~15 km grid; footprint ~60–150 km)"),
+    "regolith.feo_wt_pct": ("ironhd", 10, 1.0, "FeO", "wt%", 0.5, "0.5° Lunar Prospector GRS"),
+    "regolith.tio2_wt_pct": ("titanium2d", 10, 1.6683, "TiO2", "wt%", 2.0, "2° bins on 0.5° LP grid"),
+    "radiation.thorium_ppm": ("thoriumhd", 10, 1.0, "Thorium", "ppm", 0.5, "0.5° Lunar Prospector GRS"),
+    "radiation.potassium_ppm": ("potassium2d", 1, 1.0, "Potassium", "ppm", 2.0, "2° bins Lunar Prospector GRS"),
+    "radiation.uranium_ppm": ("uranium5d", 10, 1.0, "Uranium", "ppm", 5.0, "5° bins Lunar Prospector GRS (~150 km)"),
 }
 
 
@@ -87,7 +87,7 @@ def main() -> int:
 
     data = {}
     layer_meta = {}
-    for lid, (name, div, fac, label, units) in LAYERS.items():
+    for lid, (name, div, fac, label, units, res_deg, res_note) in LAYERS.items():
         print(f"  W4 ← {lid}")
         m = read_lp(name, div) * fac
         if lid == "ice.hydrogen_ppm":
@@ -105,6 +105,9 @@ def main() -> int:
             "group": "joel",
             "min": float(finite.min()) if finite.size else None,
             "max": float(finite.max()) if finite.size else None,
+            "sourceResolution": res_note,
+            "sourceResolutionDeg": res_deg,
+            "sourceResolutionKm": round(res_deg * 30.0, 1),  # ≈ km a l'equador (1° ≈ 30 km)
         }
 
     # Dosis gamma natural (UNSCEAR 2000), mateixa fórmula que prospector.py
@@ -127,6 +130,9 @@ def main() -> int:
         "min": float(finite.min()) if finite.size else None,
         "max": float(finite.max()) if finite.size else None,
         "function": "13.078*K[%] + 5.675*U[ppm] + 2.494*Th[ppm]",
+        "sourceResolution": "derived from K/U/Th (coarsest driver ~5° U)",
+        "sourceResolutionDeg": 5.0,
+        "sourceResolutionKm": 150,
     }
 
     man_path = OUT / "manifest.json"
@@ -149,8 +155,9 @@ def main() -> int:
 
     meta["temporary"] = True
     meta["note"] = (
-        "Preview W4: Jan slope/suitability + Joel T9 (Lunar Prospector). "
-        "Same orientation as G1K; not a substitute for official G1K binaries."
+        "Preview W4 storage grid is the same for all layers (1440×720, 0.25°). "
+        "Joel T9 native resolution is Lunar Prospector (~0.5–5° / 15–150 km): "
+        "bilinear to W4/G1K does not add detail. Jan slope comes from LOLA (~100 m)."
     )
     meta.setdefault("layers", {})
     # Manté slope/suitability si ja hi són; marca grup

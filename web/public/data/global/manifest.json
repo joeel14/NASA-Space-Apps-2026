@@ -1,6 +1,6 @@
 {
   "temporary": true,
-  "note": "Preview W4: Jan slope/suitability + Joel T9 (Lunar Prospector). Same orientation as G1K; not a substitute for official G1K binaries.",
+  "note": "Preview W4 storage grid is the same for all layers (1440\u00d7720, 0.25\u00b0). Joel T9 native resolution is Lunar Prospector (~0.5\u20135\u00b0 / 15\u2013150 km): bilinear to W4/G1K does not add detail. Jan slope comes from LOLA (~100 m).",
   "grid": {
     "id": "W4",
     "cols": 1440,
@@ -18,7 +18,9 @@
       "min": 0.0,
       "max": 63.61051559448242,
       "group": "jan",
-      "label": "Slope"
+      "label": "Slope",
+      "sourceResolution": "~118 m (LOLA LDEM) \u2192 W4 average",
+      "sourceResolutionKm": 0.12
     },
     "suitability": {
       "file": "suitability.f32",
@@ -28,7 +30,9 @@
       "max": 100.0,
       "function": "100 * max(0, 1 - slope_deg / 15)",
       "group": "jan",
-      "label": "Suitability"
+      "label": "Suitability",
+      "sourceResolution": "derived from slope",
+      "sourceResolutionKm": 0.12
     },
     "ice.hydrogen_ppm": {
       "file": "ice_hydrogen_ppm.f32",
@@ -37,7 +41,10 @@
       "label": "Hydrogen",
       "group": "joel",
       "min": 0.0,
-      "max": 192.5187530517578
+      "max": 192.5187530517578,
+      "sourceResolution": "0.5\u00b0 Lunar Prospector NS (~15 km grid; footprint ~60\u2013150 km)",
+      "sourceResolutionDeg": 0.5,
+      "sourceResolutionKm": 15
     },
     "regolith.feo_wt_pct": {
       "file": "regolith_feo_wt_pct.f32",
@@ -46,7 +53,10 @@
       "label": "FeO",
       "group": "joel",
       "min": 2.7562499046325684,
-      "max": 26.112499237060547
+      "max": 26.112499237060547,
+      "sourceResolution": "0.5\u00b0 Lunar Prospector GRS",
+      "sourceResolutionDeg": 0.5,
+      "sourceResolutionKm": 15
     },
     "regolith.tio2_wt_pct": {
       "file": "regolith_tio2_wt_pct.f32",
@@ -55,7 +65,10 @@
       "label": "TiO2",
       "group": "joel",
       "min": 0.0,
-      "max": 13.346400260925293
+      "max": 13.346400260925293,
+      "sourceResolution": "2\u00b0 bins on 0.5\u00b0 LP grid",
+      "sourceResolutionDeg": 2.0,
+      "sourceResolutionKm": 60
     },
     "radiation.thorium_ppm": {
       "file": "radiation_thorium_ppm.f32",
@@ -64,7 +77,10 @@
       "label": "Thorium",
       "group": "joel",
       "min": 0.30000001192092896,
-      "max": 12.868749618530273
+      "max": 12.868749618530273,
+      "sourceResolution": "0.5\u00b0 Lunar Prospector GRS",
+      "sourceResolutionDeg": 0.5,
+      "sourceResolutionKm": 15
     },
     "radiation.potassium_ppm": {
       "file": "radiation_potassium_ppm.f32",
@@ -73,7 +89,10 @@
       "label": "Potassium",
       "group": "joel",
       "min": 0.0,
-      "max": 3991.0
+      "max": 3991.0,
+      "sourceResolution": "2\u00b0 bins Lunar Prospector GRS",
+      "sourceResolutionDeg": 2.0,
+      "sourceResolutionKm": 60
     },
     "radiation.uranium_ppm": {
       "file": "radiation_uranium_ppm.f32",
@@ -82,7 +101,10 @@
       "label": "Uranium",
       "group": "joel",
       "min": 0.0,
-      "max": 3.700000047683716
+      "max": 3.700000047683716,
+      "sourceResolution": "5\u00b0 bins Lunar Prospector GRS (~150 km)",
+      "sourceResolutionDeg": 5.0,
+      "sourceResolutionKm": 150
     },
     "radiation.natural_gamma_dose": {
       "file": "radiation_natural_gamma_dose.f32",
@@ -92,7 +114,10 @@
       "group": "joel",
       "min": 1.0249576568603516,
       "max": 56.909175872802734,
-      "function": "13.078*K[%] + 5.675*U[ppm] + 2.494*Th[ppm]"
+      "function": "13.078*K[%] + 5.675*U[ppm] + 2.494*Th[ppm]",
+      "sourceResolution": "derived from K/U/Th (coarsest driver ~5\u00b0 U)",
+      "sourceResolutionDeg": 5.0,
+      "sourceResolutionKm": 150
     }
   },
   "source": "https://planetarymaps.usgs.gov/mosaic/Lunar_LRO_LOLA_Global_LDEM_118m_Mar2014.tif",

@@ -198,7 +198,7 @@ export default function GlobalPreview({ onBack }) {
         <div>
           <h1 className="h-lg" style={{ margin: 0 }}>Global preview (temporary)</h1>
           <p className="note-12" style={{ margin: "4px 0 0" }}>
-            W4 1440×720 · Jan (slope) + Joel T9 (Lunar Prospector) · mateixa orientació G1K
+            Rejilla W4 igual per a totes (1440×720). Joel T9: resolució nativa LP ~15–150 km (no es pot igualar al LOLA del slope).
           </p>
         </div>
       </header>
@@ -254,6 +254,7 @@ export default function GlobalPreview({ onBack }) {
               <span className="note-12">
                 {activeMeta.label || mode} · min {fmt(stats.lo, activeMeta.units)} · mean {fmt(stats.mean, activeMeta.units)} · max {fmt(stats.hi, activeMeta.units)}
                 {activeMeta.units && activeMeta.units !== "deg" && activeMeta.units !== "score_0_100" ? ` ${activeMeta.units}` : ""}
+                {activeMeta.sourceResolution ? ` · natiu: ${activeMeta.sourceResolution}` : ""}
               </span>
             ) : null}
             <div className="grow" />
