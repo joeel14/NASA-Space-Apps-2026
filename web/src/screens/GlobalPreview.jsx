@@ -1,30 +1,60 @@
-// Vista TEMPORAL: capa global W4 (slope + suitability 0–100) des de Jan / terrain_safety.
-// No substitueix el mapa polar PS1K; només permet previsualitzar la Lluna sencera.
+// Vista TEMPORAL: W4 equirectangular (Lluna sencera).
+// Inclou slope/suitability (Jan) i capes T9 Lunar Prospector (Joel).
+// No substitueix G1K ni el mapa polar PS1K.
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Btn, IconBtn } from "../ui/kit.jsx";
 
 const BASE = `${import.meta.env.BASE_URL}data/global/`;
 
+const LAYER_ORDER = [
+  "suitability",
+  "slope",
+  "ice.hydrogen_ppm",
+  "regolith.feo_wt_pct",
+  "regolith.tio2_wt_pct",
+  "radiation.natural_gamma_dose",
+  "radiation.thorium_ppm",
+  "radiation.potassium_ppm",
+  "radiation.uranium_ppm",
+];
+
+const SHORT = {
+  suitability: "Suit 0–100",
+  slope: "Slope °",
+  "ice.hydrogen_ppm": "H ppm",
+  "regolith.feo_wt_pct": "FeO %",
+  "regolith.tio2_wt_pct": "TiO₂ %",
+  "radiation.natural_gamma_dose": "γ dose",
+  "radiation.thorium_ppm": "Th ppm",
+  "radiation.potassium_ppm": "K ppm",
+  "radiation.uranium_ppm": "U ppm",
+};
+
 async function loadGlobal() {
   const manifest = await fetch(BASE + "manifest.json").then((r) => {
     if (!r.ok) throw new Error(`global/manifest.json HTTP ${r.status}`);
     return r.json();
   });
-  const [slopeBuf, suitBuf] = await Promise.all([
-    fetch(BASE + manifest.layers.slope.file).then((r) => r.arrayBuffer()),
-    fetch(BASE + manifest.layers.suitability.file).then((r) => r.arrayBuffer()),
-  ]);
-  return {
-    manifest,
-    slope: new Float32Array(slopeBuf),
-    suitability: new Float32Array(suitBuf),
-  };
+  const keys = Object.keys(manifest.layers || {});
+  const buffers = await Promise.all(
+    keys.map((k) => fetch(BASE + manifest.layers[k].file).then((r) => {
+      if (!r.ok) throw new Error(`${manifest.layers[k].file} HTTP ${r.status}`);
+      return r.arrayBuffer();
+    })),
+  );
+  const arrays = {};
+  keys.forEach((k, i) => { arrays[k] = new Float32Array(buffers[i]); });
+  return { manifest, arrays };
 }
 
 function paint(canvas, data, mode) {
-  const { manifest, slope, suitability } = data;
+  const { manifest, arrays } = data;
   const { cols, rows } = manifest.grid;
+  const meta = manifest.layers[mode];
+  const arr = arrays[mode];
+  if (!meta || !arr) return;
+
   const dpr = Math.min(2, window.devicePixelRatio || 1);
   const cssW = canvas.clientWidth || 800;
   const cssH = Math.round((cssW * rows) / cols);
@@ -34,8 +64,12 @@ function paint(canvas, data, mode) {
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   const img = ctx.createImageData(cols, rows);
   const px = img.data;
-  const arr = mode === "slope" ? slope : suitability;
-  const vmax = mode === "slope" ? 30 : 100;
+
+  const lo = Number.isFinite(meta.min) ? meta.min : 0;
+  const hi = Number.isFinite(meta.max) && meta.max > lo ? meta.max : lo + 1;
+  const isSlope = mode === "slope";
+  const isSuit = mode === "suitability";
+  const vmax = isSlope ? Math.min(30, hi) : isSuit ? 100 : hi;
 
   for (let i = 0; i < cols * rows; i++) {
     const v = arr[i];
@@ -44,20 +78,24 @@ function paint(canvas, data, mode) {
       px[o] = 14; px[o + 1] = 17; px[o + 2] = 22; px[o + 3] = 255;
       continue;
     }
-    const t = Math.max(0, Math.min(1, mode === "slope" ? v / vmax : v / vmax));
-    // ramp: fosc → ambre → clar (sense porpra)
-    if (mode === "slope") {
+    const t = Math.max(0, Math.min(1, isSlope || isSuit ? v / vmax : (v - lo) / (vmax - lo)));
+    if (isSlope) {
       px[o] = Math.round(26 + t * 180);
       px[o + 1] = Math.round(40 + t * 90);
       px[o + 2] = Math.round(30 + (1 - t) * 40);
-    } else {
+    } else if (isSuit) {
       px[o] = Math.round(26 + t * 210);
       px[o + 1] = Math.round(18 + t * 200);
       px[o + 2] = Math.round(16 + t * 160);
+    } else {
+      // Joel: fosc → ambre (recursos / dosi)
+      px[o] = Math.round(20 + t * 220);
+      px[o + 1] = Math.round(28 + t * 140);
+      px[o + 2] = Math.round(36 + (1 - t) * 50);
     }
     px[o + 3] = 255;
   }
-  // dibuixa escalat a l'amplada del canvas CSS
+
   const off = document.createElement("canvas");
   off.width = cols;
   off.height = rows;
@@ -65,6 +103,17 @@ function paint(canvas, data, mode) {
   ctx.imageSmoothingEnabled = true;
   ctx.clearRect(0, 0, cssW, cssH);
   ctx.drawImage(off, 0, 0, cssW, cssH);
+}
+
+function fmt(v, units) {
+  if (!Number.isFinite(v)) return "—";
+  if (units === "score_0_100") return v.toFixed(0);
+  if (units === "deg") return `${v.toFixed(1)}°`;
+  if (units === "ppm" && v >= 100) return v.toFixed(0);
+  if (units === "ppm") return v.toFixed(2);
+  if (units === "wt%") return v.toFixed(2);
+  if (units === "nGy/h") return v.toFixed(2);
+  return v.toFixed(2);
 }
 
 export default function GlobalPreview({ onBack }) {
@@ -77,7 +126,12 @@ export default function GlobalPreview({ onBack }) {
   useEffect(() => {
     let cancelled = false;
     loadGlobal()
-      .then((d) => { if (!cancelled) setData(d); })
+      .then((d) => {
+        if (cancelled) return;
+        setData(d);
+        const keys = Object.keys(d.manifest.layers || {});
+        if (!keys.includes("suitability") && keys.length) setMode(keys[0]);
+      })
       .catch((e) => { if (!cancelled) setErr(e.message || String(e)); });
     return () => { cancelled = true; };
   }, []);
@@ -90,9 +144,20 @@ export default function GlobalPreview({ onBack }) {
     return () => window.removeEventListener("resize", draw);
   }, [data, mode]);
 
+  const layerKeys = useMemo(() => {
+    if (!data) return [];
+    const present = new Set(Object.keys(data.manifest.layers || {}));
+    const ordered = LAYER_ORDER.filter((k) => present.has(k));
+    for (const k of present) if (!ordered.includes(k)) ordered.push(k);
+    return ordered;
+  }, [data]);
+
+  const janKeys = layerKeys.filter((k) => (data?.manifest.layers[k]?.group || (k === "slope" || k === "suitability" ? "jan" : "joel")) === "jan");
+  const joelKeys = layerKeys.filter((k) => !janKeys.includes(k));
+
   const stats = useMemo(() => {
-    if (!data) return null;
-    const a = mode === "slope" ? data.slope : data.suitability;
+    if (!data || !data.arrays[mode]) return null;
+    const a = data.arrays[mode];
     let n = 0, sum = 0, hi = -Infinity, lo = Infinity;
     for (let i = 0; i < a.length; i++) {
       const v = a[i];
@@ -115,34 +180,62 @@ export default function GlobalPreview({ onBack }) {
     const lon = lon0 + (c + 0.5) * stepDeg;
     const lat = lat0 - (r + 0.5) * stepDeg;
     const i = r * cols + c;
+    const meta = data.manifest.layers[mode];
     setHover({
       lon, lat,
-      slope: data.slope[i],
-      suitability: data.suitability[i],
+      value: data.arrays[mode]?.[i],
+      units: meta?.units,
+      label: meta?.label || mode,
     });
   }
+
+  const activeMeta = data?.manifest.layers[mode];
 
   return (
     <div className="global-prev">
       <header className="global-prev__head">
         <IconBtn icon="arrow-left" label="Back" onClick={onBack} />
         <div>
-          <h1 className="h-lg" style={{ margin: 0 }}>Global slope preview (temporary)</h1>
+          <h1 className="h-lg" style={{ margin: 0 }}>Global preview (temporary)</h1>
           <p className="note-12" style={{ margin: "4px 0 0" }}>
-            W4 1440×720 · <code>terrain.slope</code> + <code>suitability.slope</code> (contract §6) · same G1K orientation as T9 (Joel)
+            W4 1440×720 · Jan (slope) + Joel T9 (Lunar Prospector) · mateixa orientació G1K
           </p>
         </div>
-        <div className="grow" />
-        <div className="row-10">
-          <Btn variant={mode === "suitability" ? "primary" : "ghost"} onClick={() => setMode("suitability")}>Suitability 0–100</Btn>
-          <Btn variant={mode === "slope" ? "primary" : "ghost"} onClick={() => setMode("slope")}>Slope °</Btn>
-        </div>
       </header>
+
+      {data ? (
+        <div className="global-prev__tabs">
+          <div className="global-prev__group">
+            <span className="lbl">Jan · T1</span>
+            <div className="row-10" style={{ flexWrap: "wrap" }}>
+              {janKeys.map((k) => (
+                <Btn key={k} variant={mode === k ? "primary" : "ghost"} size="sm" onClick={() => setMode(k)}>
+                  {SHORT[k] || data.manifest.layers[k]?.label || k}
+                </Btn>
+              ))}
+            </div>
+          </div>
+          <div className="global-prev__group">
+            <span className="lbl">Joel · T9</span>
+            <div className="row-10" style={{ flexWrap: "wrap" }}>
+              {joelKeys.map((k) => (
+                <Btn key={k} variant={mode === k ? "primary" : "ghost"} size="sm" onClick={() => setMode(k)}>
+                  {SHORT[k] || data.manifest.layers[k]?.label || k}
+                </Btn>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {err ? (
         <div className="global-prev__err">
           <p><strong>No global data yet.</strong> {err}</p>
-          <p className="note-12">Run: <code>python3 scripts/export_web_global_preview.py</code></p>
+          <p className="note-12">
+            Run: <code>python3 scripts/export_web_global_preview.py</code>
+            {" · "}
+            <code>python3 scripts/export_web_global_joel_preview.py</code>
+          </p>
         </div>
       ) : !data ? (
         <p className="note-12" style={{ padding: 24 }}>Loading global W4 layers…</p>
@@ -157,17 +250,17 @@ export default function GlobalPreview({ onBack }) {
             />
           </div>
           <footer className="global-prev__foot">
-            {stats ? (
+            {stats && activeMeta ? (
               <span className="note-12">
-                {mode === "slope" ? "Slope" : "Suitability"} · min {stats.lo.toFixed(1)} · mean {stats.mean.toFixed(1)} · max {stats.hi.toFixed(1)}
-                {mode === "suitability" ? " (0–100)" : "°"}
+                {activeMeta.label || mode} · min {fmt(stats.lo, activeMeta.units)} · mean {fmt(stats.mean, activeMeta.units)} · max {fmt(stats.hi, activeMeta.units)}
+                {activeMeta.units && activeMeta.units !== "deg" && activeMeta.units !== "score_0_100" ? ` ${activeMeta.units}` : ""}
               </span>
             ) : null}
             <div className="grow" />
             {hover ? (
               <span className="note-12 mono">
-                {hover.lat.toFixed(2)}°, {hover.lon.toFixed(2)}° · slope {Number.isFinite(hover.slope) ? `${hover.slope.toFixed(1)}°` : "—"}
-                {" · "}suit {Number.isFinite(hover.suitability) ? hover.suitability.toFixed(0) : "—"}
+                {hover.lat.toFixed(2)}°, {hover.lon.toFixed(2)}° · {hover.label} {fmt(hover.value, hover.units)}
+                {hover.units && hover.units !== "deg" && hover.units !== "score_0_100" ? ` ${hover.units}` : ""}
               </span>
             ) : (
               <span className="note-12">Move the cursor over the map</span>

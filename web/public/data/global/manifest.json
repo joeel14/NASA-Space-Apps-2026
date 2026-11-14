@@ -1,6 +1,6 @@
 {
   "temporary": true,
-  "note": "Preview W4 from scripts/terrain_safety pipeline (Jan). Not G1K.",
+  "note": "Preview W4: Jan slope/suitability + Joel T9 (Lunar Prospector). Same orientation as G1K; not a substitute for official G1K binaries.",
   "grid": {
     "id": "W4",
     "cols": 1440,
@@ -16,7 +16,9 @@
       "dtype": "float32",
       "units": "deg",
       "min": 0.0,
-      "max": 63.61051559448242
+      "max": 63.61051559448242,
+      "group": "jan",
+      "label": "Slope"
     },
     "suitability": {
       "file": "suitability.f32",
@@ -24,8 +26,78 @@
       "units": "score_0_100",
       "min": 0.0,
       "max": 100.0,
-      "function": "100 * max(0, 1 - slope_deg / 15)"
+      "function": "100 * max(0, 1 - slope_deg / 15)",
+      "group": "jan",
+      "label": "Suitability"
+    },
+    "ice.hydrogen_ppm": {
+      "file": "ice_hydrogen_ppm.f32",
+      "dtype": "float32",
+      "units": "ppm",
+      "label": "Hydrogen",
+      "group": "joel",
+      "min": 0.0,
+      "max": 192.5187530517578
+    },
+    "regolith.feo_wt_pct": {
+      "file": "regolith_feo_wt_pct.f32",
+      "dtype": "float32",
+      "units": "wt%",
+      "label": "FeO",
+      "group": "joel",
+      "min": 2.7562499046325684,
+      "max": 26.112499237060547
+    },
+    "regolith.tio2_wt_pct": {
+      "file": "regolith_tio2_wt_pct.f32",
+      "dtype": "float32",
+      "units": "wt%",
+      "label": "TiO2",
+      "group": "joel",
+      "min": 0.0,
+      "max": 13.346400260925293
+    },
+    "radiation.thorium_ppm": {
+      "file": "radiation_thorium_ppm.f32",
+      "dtype": "float32",
+      "units": "ppm",
+      "label": "Thorium",
+      "group": "joel",
+      "min": 0.30000001192092896,
+      "max": 12.868749618530273
+    },
+    "radiation.potassium_ppm": {
+      "file": "radiation_potassium_ppm.f32",
+      "dtype": "float32",
+      "units": "ppm",
+      "label": "Potassium",
+      "group": "joel",
+      "min": 0.0,
+      "max": 3991.0
+    },
+    "radiation.uranium_ppm": {
+      "file": "radiation_uranium_ppm.f32",
+      "dtype": "float32",
+      "units": "ppm",
+      "label": "Uranium",
+      "group": "joel",
+      "min": 0.0,
+      "max": 3.700000047683716
+    },
+    "radiation.natural_gamma_dose": {
+      "file": "radiation_natural_gamma_dose.f32",
+      "dtype": "float32",
+      "units": "nGy/h",
+      "label": "Gamma dose",
+      "group": "joel",
+      "min": 1.0249576568603516,
+      "max": 56.909175872802734,
+      "function": "13.078*K[%] + 5.675*U[ppm] + 2.494*Th[ppm]"
     }
   },
-  "source": "https://planetarymaps.usgs.gov/mosaic/Lunar_LRO_LOLA_Global_LDEM_118m_Mar2014.tif"
+  "source": "https://planetarymaps.usgs.gov/mosaic/Lunar_LRO_LOLA_Global_LDEM_118m_Mar2014.tif",
+  "sources": {
+    "jan": "scripts/export_web_global_preview.py (LOLA LDEM)",
+    "joel": "Lunar Prospector GRS/NS special products (PDS) via export_web_global_joel_preview.py"
+  }
 }
