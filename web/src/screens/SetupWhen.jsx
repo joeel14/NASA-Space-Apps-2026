@@ -80,7 +80,6 @@ export default function SetupWhen({ mission, setPeriod, setCustom, setDuration, 
         <nav aria-label="Menu" className="popmenu when__pop">
           <button type="button" onClick={() => go("explore")}><Icon name="orbit" size={16} />Explore</button>
           <button type="button" onClick={() => go("compare")}><Icon name="compare" size={16} />Compare</button>
-          <button type="button" onClick={() => go("global")}><Icon name="globe" size={16} />Global</button>
           <button type="button" onClick={() => { setMenu(false); openSettings(); }}><Icon name="sliders" size={16} />Settings</button>
           <button type="button" onClick={openLearn}><Icon name="info" size={16} />How it works</button>
         </nav>

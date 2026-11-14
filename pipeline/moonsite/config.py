@@ -103,6 +103,7 @@ EPHEM_STEP_S = 3600.0                  # una posición por hora
 EPHEM_FRAME = "MOON_ME"                # marco de LOLA (Mean Earth / Polar Axis)
 ABCORR = "LT+S"                        # posiciones aparentes, como Horizons "airless apparent"
 SUN_RADIUS_KM = 695_700.0
+
 # ---------------------------------------------------------------------------
 # Malla global G1K (contrato de datos v0.2, §2) y capa Tierra (T4)
 # ---------------------------------------------------------------------------

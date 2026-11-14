@@ -1,12 +1,9 @@
 {
-  "contractVersion": "0.2",
+  "contractVersion": "0.1",
   "layers": [
     "ice.psr_distance_km",
     "sun.psr_mask",
     "terrain.elevation",
-    "terrain.slope",
-    "suitability.slope",
-    "earth.visible_fraction.mean",
-    "suitability.earth"
+    "terrain.slope"
   ]
 }
