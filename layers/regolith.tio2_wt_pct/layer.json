@@ -1,0 +1,43 @@
+{
+  "id": "regolith.tio2_wt_pct",
+  "version": "0.2.0",
+  "title": "Titanium dioxide (TiO2)",
+  "units": "wt%",
+  "validRange": [
+    0,
+    25
+  ],
+  "kind": "static",
+  "owner": "Joel (T9 · composición y radiactividad)",
+  "fidelity": "approximate",
+  "method": "Lunar Prospector GRS Ti abundance (2° bins on the 0.5° grid) converted to TiO2 with the molar-mass ratio 1.6683. Bilinear resampling of the 0.5° simple-cylindrical product (longitude wraps at ±180°). True footprint ~60–150 km: finer grids add no detail.",
+  "params": {
+    "sourceResolutionDeg": 0.5,
+    "resampling": "bilinear"
+  },
+  "sources": [
+    {
+      "name": "Lunar Prospector GRS/NS special products (0.5°)",
+      "url": "https://pds-geosciences.wustl.edu/missions/lunarp/reduced_special.html",
+      "citation": "Lunar Prospector Spectrometer Team, NASA PDS Geosciences Node"
+    },
+    {
+      "name": "Reference",
+      "citation": "Lunar Prospector Spectrometer Team, PDS special products (titanium2d)"
+    }
+  ],
+  "files": [
+    {
+      "grid": "G1K",
+      "period": "static",
+      "path": "G1K/static.u16",
+      "dtype": "uint16",
+      "scale": 0.001,
+      "offset": 0,
+      "nodata": 65535,
+      "sha256": "230f3292dfcfeb87302dc97d954700050723eaaeae416f02eca535c7ef7bc859",
+      "min": 0.0,
+      "max": 13.346
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "temporary": true,
+  "note": "Preview W4 from scripts/terrain_safety pipeline (Jan). Not G1K.",
+  "grid": {
+    "id": "W4",
+    "cols": 1440,
+    "rows": 720,
+    "lon0": -180.0,
+    "lat0": 90.0,
+    "stepDeg": 0.25,
+    "order": "row-major, row 0 = north"
+  },
+  "layers": {
+    "slope": {
+      "file": "slope.f32",
+      "dtype": "float32",
+      "units": "deg",
+      "min": 0.0,
+      "max": 63.61051559448242
+    },
+    "suitability": {
+      "file": "suitability.f32",
+      "dtype": "float32",
+      "units": "score_0_100",
+      "min": 0.0,
+      "max": 100.0,
+      "function": "100 * max(0, 1 - slope_deg / 15)"
+    }
+  },
+  "source": "https://planetarymaps.usgs.gov/mosaic/Lunar_LRO_LOLA_Global_LDEM_118m_Mar2014.tif"
+}

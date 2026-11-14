@@ -13,6 +13,7 @@ import Site from "./screens/Site.jsx";
 import Compare from "./screens/Compare.jsx";
 import { ExportDialog, SettingsDrawer } from "./screens/Overlays.jsx";
 import LearnPage from "./components/LearnPage.jsx";
+import GlobalPreview from "./screens/GlobalPreview.jsx";
 
 const DAY_MS = 86400000;
 const H = 3600e3;
@@ -411,6 +412,16 @@ export default function App() {
       <div className="shell">
         {RailEl}
         <main className="shell__main">{data ? <div className="card card--flush"><LearnPage data={data} /></div> : null}</main>
+      </div>
+    );
+  } else if (screen === "global") {
+    // TEMPORAL: previsualització Lluna sencera W4 (slope + suitability) des de terrain_safety
+    page = (
+      <div className="shell">
+        {RailEl}
+        <main className="shell__main shell__main--flush">
+          <GlobalPreview onBack={() => go("explore")} />
+        </main>
       </div>
     );
   } else {

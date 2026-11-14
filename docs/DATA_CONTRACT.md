@@ -1,6 +1,6 @@
 # Contrato de datos — Luna entera
 
-**Versión 0.2 · 2026-11-14**
+**Versión 0.2.1 · 2026-11-14**
 
 Este documento dice **cómo se hace y se entrega cada matriz** para que cada persona
 trabaje por su lado y todo encaje al juntarlo. Si algo no está aquí, se añade aquí antes
@@ -9,6 +9,10 @@ de programarlo.
 - Esquema de `layer.json`: [`docs/schema/layer.schema.json`](schema/layer.schema.json)
 - Ejemplo: [`docs/examples/layer.example.json`](examples/layer.example.json)
 - Validador: `python tools/validate_layer.py <carpeta_de_la_capa>`
+
+**Cambios en la v0.2.1** (solo añade; nada de la v0.2 cambia):
+- **Trabajos:** nuevo T9 · Composición y radiactividad (§7), con 6 capas nuevas.
+- **D2** pasa a "propuesta" con la convención que ya usa T6/T9 (−180° y centro de celda).
 
 **Cambios respecto a la v0.1:**
 - **Malla:** una sola, la antigua de 10 916 × 5 458 (D1 cerrada).
@@ -255,6 +259,20 @@ Prioridad: **P0** imprescindible · **P1** muy recomendable · **P2** si da tiem
   (LROC, Wagner et al. 2017)…
 - **Depende de:** nada.
 
+### T9 · Composición y radiactividad — P2 (Joel)
+- **Entrega** (todas `static`, `UInt16` con `scale`, `nodata` 65 535):
+  `regolith.feo_wt_pct` (% en peso), `regolith.tio2_wt_pct` (% en peso),
+  `radiation.thorium_ppm`, `radiation.potassium_ppm`, `radiation.uranium_ppm` (ppm) y
+  `radiation.natural_gamma_dose` (nGy/h). También hace `ice.hydrogen_ppm` de T6.
+- **Datos:** Lunar Prospector Gamma-Ray y Neutron Spectrometer, productos especiales de
+  NASA PDS Geosciences (0,5°): `ironhd`, `titanium2d`, `thoriumhd`, `potassium2d`,
+  `uranium5d`, `hydrogenhd`. Dosis = 13,078·K(%) + 5,675·U + 2,494·Th (UNSCEAR 2000).
+- **Fidelidad:** `approximate`; la huella real del dato es de ~60–150 km, el paso a `G1K`
+  es bilineal y solo suaviza.
+- **Uso en la puntuación** (propuesta): recursos = FeO + TiO2 + H (más es mejor);
+  radiación natural = dosis (menos es mejor). Si se quieren 0–100, como derivadas §6.
+- **Depende de:** nada. Código: `pipeline/moonsite/prospector.py`.
+
 ### Integración — este repositorio
 - `W4` para la web, puntuación, mapa de calor, puntos calientes, globo 3D, módulo polar y
   `catalog.json`.
@@ -298,7 +316,7 @@ convertidas a `G1K` para que solo exista una malla hacia fuera.
 | # | Decisión | Estado |
 |---|---|---|
 | D1 | Malla global | **Cerrada:** 10 916 × 5 458 (`G1K`) |
-| D2 | Origen de la columna 0 y centro de celda | **Por confirmar** (supuesto: −180° y centro) |
+| D2 | Origen de la columna 0 y centro de celda | **Propuesta:** −180° y centro (la usan T6/T9) |
 | D3 | Periodos | **Cerrada:** mensuales 2026–2030 + media 2026–2030 |
 | D4 | Constelación de relevo | **Pendiente** (T5) |
 | D5 | Una sola malla hacia fuera | **Cerrada:** solo `G1K`; el módulo polar es interno |

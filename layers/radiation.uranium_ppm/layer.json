@@ -1,0 +1,43 @@
+{
+  "id": "radiation.uranium_ppm",
+  "version": "0.2.0",
+  "title": "Uranium abundance",
+  "units": "ppm",
+  "validRange": [
+    0,
+    20
+  ],
+  "kind": "static",
+  "owner": "Joel (T9 · composición y radiactividad)",
+  "fidelity": "approximate",
+  "method": "Lunar Prospector GRS uranium (5° bins, 150 km). Bilinear resampling of the 0.5° simple-cylindrical product (longitude wraps at ±180°). True footprint ~60–150 km: finer grids add no detail.",
+  "params": {
+    "sourceResolutionDeg": 0.5,
+    "resampling": "bilinear"
+  },
+  "sources": [
+    {
+      "name": "Lunar Prospector GRS/NS special products (0.5°)",
+      "url": "https://pds-geosciences.wustl.edu/missions/lunarp/reduced_special.html",
+      "citation": "Lunar Prospector Spectrometer Team, NASA PDS Geosciences Node"
+    },
+    {
+      "name": "Reference",
+      "citation": "Prettyman et al. (2006), JGR 111"
+    }
+  ],
+  "files": [
+    {
+      "grid": "G1K",
+      "period": "static",
+      "path": "G1K/static.u16",
+      "dtype": "uint16",
+      "scale": 0.0001,
+      "offset": 0,
+      "nodata": 65535,
+      "sha256": "aa354f638e1951fe82d1d73b31016deef402f316833ff52fbd911734d9ef0382",
+      "min": 0.0,
+      "max": 3.7
+    }
+  ]
+}

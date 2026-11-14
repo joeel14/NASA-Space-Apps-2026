@@ -1,0 +1,43 @@
+{
+  "id": "ice.hydrogen_ppm",
+  "version": "0.2.0",
+  "title": "Hydrogen abundance",
+  "units": "ppm",
+  "validRange": [
+    0,
+    1000
+  ],
+  "kind": "static",
+  "owner": "Joel (T9 · composición y radiactividad)",
+  "fidelity": "approximate",
+  "method": "Lunar Prospector neutron spectrometer hydrogen map (half-degree). Negative values (counting noise) are set to 0. Bilinear resampling of the 0.5° simple-cylindrical product (longitude wraps at ±180°). True footprint ~60–150 km: finer grids add no detail.",
+  "params": {
+    "sourceResolutionDeg": 0.5,
+    "resampling": "bilinear"
+  },
+  "sources": [
+    {
+      "name": "Lunar Prospector GRS/NS special products (0.5°)",
+      "url": "https://pds-geosciences.wustl.edu/missions/lunarp/reduced_special.html",
+      "citation": "Lunar Prospector Spectrometer Team, NASA PDS Geosciences Node"
+    },
+    {
+      "name": "Reference",
+      "citation": "Lunar Prospector Spectrometer Team, PDS special products (hydrogenhd)"
+    }
+  ],
+  "files": [
+    {
+      "grid": "G1K",
+      "period": "static",
+      "path": "G1K/static.u16",
+      "dtype": "uint16",
+      "scale": 0.01,
+      "offset": 0,
+      "nodata": 65535,
+      "sha256": "4c3085f3a9e09ce4d47f578c6dd9097585b62e0781d161683e4447da012bb19c",
+      "min": 0.0,
+      "max": 195.37
+    }
+  ]
+}

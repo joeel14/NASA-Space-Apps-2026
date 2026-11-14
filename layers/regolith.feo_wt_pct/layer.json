@@ -1,0 +1,43 @@
+{
+  "id": "regolith.feo_wt_pct",
+  "version": "0.2.0",
+  "title": "Iron oxide (FeO)",
+  "units": "wt%",
+  "validRange": [
+    0,
+    40
+  ],
+  "kind": "static",
+  "owner": "Joel (T9 · composición y radiactividad)",
+  "fidelity": "approximate",
+  "method": "Lunar Prospector GRS FeO abundance (half-degree). Bilinear resampling of the 0.5° simple-cylindrical product (longitude wraps at ±180°). True footprint ~60–150 km: finer grids add no detail.",
+  "params": {
+    "sourceResolutionDeg": 0.5,
+    "resampling": "bilinear"
+  },
+  "sources": [
+    {
+      "name": "Lunar Prospector GRS/NS special products (0.5°)",
+      "url": "https://pds-geosciences.wustl.edu/missions/lunarp/reduced_special.html",
+      "citation": "Lunar Prospector Spectrometer Team, NASA PDS Geosciences Node"
+    },
+    {
+      "name": "Reference",
+      "citation": "Lunar Prospector Spectrometer Team, PDS special products (ironhd)"
+    }
+  ],
+  "files": [
+    {
+      "grid": "G1K",
+      "period": "static",
+      "path": "G1K/static.u16",
+      "dtype": "uint16",
+      "scale": 0.001,
+      "offset": 0,
+      "nodata": 65535,
+      "sha256": "8f26065122ca3cdfa1e3cc76f1d6715695e3ea659ef64ad21d85d0f4c3a70f7f",
+      "min": 2.612,
+      "max": 26.544
+    }
+  ]
+}

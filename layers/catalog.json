@@ -2,9 +2,16 @@
   "contractVersion": "0.2",
   "layers": [
     "ice.psr_distance_km",
+    "ice.hydrogen_ppm",
     "sun.psr_mask",
     "terrain.elevation",
     "terrain.slope",
-    "suitability.slope"
+    "suitability.slope",
+    "regolith.feo_wt_pct",
+    "regolith.tio2_wt_pct",
+    "radiation.thorium_ppm",
+    "radiation.potassium_ppm",
+    "radiation.uranium_ppm",
+    "radiation.natural_gamma_dose"
   ]
 }

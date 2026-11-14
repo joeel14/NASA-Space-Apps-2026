@@ -1,0 +1,43 @@
+{
+  "id": "radiation.natural_gamma_dose",
+  "version": "0.2.0",
+  "title": "Natural gamma dose rate from soil K, U and Th",
+  "units": "nGy/h",
+  "validRange": [
+    0,
+    500
+  ],
+  "kind": "static",
+  "owner": "Joel (T9 · composición y radiactividad)",
+  "fidelity": "approximate",
+  "method": "D = 13.078·K[%] + 5.675·U[ppm] + 2.494·Th[ppm] (standard soil-to-dose factors, UNSCEAR 2000) applied to the Lunar Prospector K, U and Th layers. Relative indicator of soil radioactivity; excludes galactic cosmic rays and solar particle events, which dominate the total lunar dose. Bilinear resampling of the 0.5° simple-cylindrical product (longitude wraps at ±180°). True footprint ~60–150 km: finer grids add no detail.",
+  "params": {
+    "sourceResolutionDeg": 0.5,
+    "resampling": "bilinear"
+  },
+  "sources": [
+    {
+      "name": "Lunar Prospector GRS/NS special products (0.5°)",
+      "url": "https://pds-geosciences.wustl.edu/missions/lunarp/reduced_special.html",
+      "citation": "Lunar Prospector Spectrometer Team, NASA PDS Geosciences Node"
+    },
+    {
+      "name": "Dose conversion factors",
+      "citation": "UNSCEAR (2000), Annex B"
+    }
+  ],
+  "files": [
+    {
+      "grid": "G1K",
+      "period": "static",
+      "path": "G1K/static.u16",
+      "dtype": "uint16",
+      "scale": 0.01,
+      "offset": 0,
+      "nodata": 65535,
+      "sha256": "c145907410f09d033f0e3038ef6af8611fac0c972141e34d2d62256ba8e97df3",
+      "min": 1.01,
+      "max": 57.15
+    }
+  ]
+}

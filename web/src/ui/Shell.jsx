@@ -43,6 +43,7 @@ export function Rail({ screen, go, siteName, onMission, onExport }) {
       {item("explore", "orbit", "Explore")}
       {item("site", "map-pin", "Mare")}
       {item("compare", "compare", "Compare")}
+      {item("global", "globe", "Global")}
       <div className="grow rail__gap" />
       <button type="button" className="rail__item rail__item--tool" onClick={onMission} title={siteName ? undefined : "Mission settings"}>
         <span className="rail__dot rail__dot--tool"><Icon name="sliders" size={18} /></span>

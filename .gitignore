@@ -21,5 +21,7 @@ data/pas1/
 data/pas1_global/
 *.npy
 
-# Capas G1K globales (demasiado grandes para git; sí layer.json)
-layers/**/G1K/
+# Binarios de capas (contrato §3.3): van a una release o a la carpeta del equipo
+layers/*/G1K/
+layers/*/W4/
+layers/*/PS1K/

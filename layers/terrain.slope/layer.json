@@ -8,17 +8,23 @@
     90
   ],
   "kind": "static",
-  "owner": "Equipo Polar + Web",
+  "owner": "Equipo Polar + Jan / Equipo Global (T1)",
   "fidelity": "computed",
-  "method": "Median of 16 LOLA LDSM_75S_240M samples inside each 1 km pixel.",
+  "method": "Polar PS1K: median of 16 LOLA LDSM_75S_240M samples inside each 1 km pixel. Global G1K: LOLA LDEM area-average resampled to G1K (~1 km baseline), slope from finite differences (scripts/terrain_safety.py).",
   "params": {
-    "baselineM": 240
+    "baselineM": 240,
+    "baselineM_G1K": 1000
   },
   "sources": [
     {
       "name": "LOLA LDSM_75S_240M",
       "url": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/polar/img/",
       "citation": "Smith et al. (2010), NASA PDS"
+    },
+    {
+      "name": "LOLA Global LDEM (USGS mosaic)",
+      "url": "https://planetarymaps.usgs.gov/mosaic/Lunar_LRO_LOLA_Global_LDEM_118m_Mar2014.tif",
+      "citation": "Smith et al. (2010); USGS Astrogeology"
     }
   ],
   "files": [
@@ -30,6 +36,14 @@
       "sha256": "6eb0383ac79b78e84ddb63558c808f3231bfd8346c2cbb613186cbd29f4745da",
       "min": 1.1077499389648438,
       "max": 45.0
+    },
+    {
+      "grid": "G1K",
+      "period": "static",
+      "path": "G1K/static.f32",
+      "dtype": "float32",
+      "nodata": null,
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
     }
   ]
 }
